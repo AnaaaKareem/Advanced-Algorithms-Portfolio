@@ -6,7 +6,7 @@ using namespace std;
 // Node class represents each element of the dictionary tree
 class Node {
     public:
-        // Word
+        // Word in dictionary
         string value;
         // Pointer to left leaf
         Node* left;
@@ -17,7 +17,7 @@ class Node {
 
     // Constructor to initialize tree
     Node(string val) : value(val), left(nullptr), right(nullptr), height(1) {}
-};  
+};
 
 // AVL class Initialization
 class AVL {
@@ -28,6 +28,10 @@ class AVL {
     // Initialize a constructor with root node to null
     AVL() {
         root = nullptr;
+    }
+
+    ~AVL() {
+        deleteTree(root);
     }
 
     // Return node height
@@ -155,7 +159,7 @@ class AVL {
     }
 
     // traverseTree with prefix checking
-    void traverseTree(Node* node, string p) {
+    void traverseTree(Node* node, string& p) {
         // If tree is empty don't search
         if (node == nullptr) {
             return;
@@ -169,7 +173,7 @@ class AVL {
             for (int i = 0; i < p.length(); i++) {
                 // Check if there exists a character mismatch
                 if (p[i] != node->value[i]) {
-                    // set match to false a stop iteration
+                    // set match to false and stop iteration
                     match = false;
                     break;
                 }
@@ -179,13 +183,14 @@ class AVL {
                 cout << node->value << endl;
             }
         }
-
+        
         // If the current prefix is smaller than the current node's value traverse right
         if (p < node->value) {
             traverseTree(node->left, p);
         }
+        
         // If the current prefix is bigger than the current node's value traverse left
-        if (p >= node->value) {
+        if (p > node->value || match) {
             traverseTree(node->right, p);
         }
     }
@@ -199,6 +204,20 @@ class AVL {
         // Traverse tree from root to find all prefixes
         traverseTree(root, prefix);
         cout << endl;
+    }
+
+    // Delete Tree
+    void deleteTree(Node* node) {
+        if (node == nullptr) {
+            return;
+        }
+        // Traverse to the right leaf
+        deleteTree(node->right);
+        // Traverse to the left leaf
+        deleteTree(node->left);
+        // Delete node
+        delete node;
+        node = nullptr;
     }
 };
 
@@ -236,7 +255,7 @@ int main() {
     while (true) {
         // Check for input
         if (_kbhit()) {
-            // Clear console/terminal
+            // Clear terminal
             system("cls");
 
             // Get character input
